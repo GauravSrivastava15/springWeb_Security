@@ -1,6 +1,9 @@
 package com.SecurityApp.SecurityApplication.entity;
 
 import jakarta.persistence.*;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 public class User implements UserDetails {
 
@@ -18,6 +23,12 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
+
+    public User(Long id, String email, String password) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -31,6 +42,6 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.password;
+        return this.email;
     }
 }
