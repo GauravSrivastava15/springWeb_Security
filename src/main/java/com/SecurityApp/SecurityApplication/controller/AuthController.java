@@ -1,7 +1,9 @@
 package com.SecurityApp.SecurityApplication.controller;
 
+import com.SecurityApp.SecurityApplication.dto.LoginDto;
 import com.SecurityApp.SecurityApplication.dto.SignUpDto;
 import com.SecurityApp.SecurityApplication.dto.UserDto;
+import com.SecurityApp.SecurityApplication.services.AuthService;
 import com.SecurityApp.SecurityApplication.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/signup")
     public ResponseEntity<UserDto> singUp(@RequestBody SignUpDto signUpDto){
         UserDto userDto = userService.signUp(signUpDto);
         return ResponseEntity.ok(userDto);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+        String token = authService.login(loginDto);
+        return ResponseEntity.ok(token);
     }
 
 }
