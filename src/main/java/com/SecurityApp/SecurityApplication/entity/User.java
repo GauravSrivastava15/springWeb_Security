@@ -23,12 +23,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
-
-    public User(Long id, String email, String password) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-    }
+    private String name;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
