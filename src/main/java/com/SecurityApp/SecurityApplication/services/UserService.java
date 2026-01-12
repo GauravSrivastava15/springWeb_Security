@@ -39,6 +39,12 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
     }
 
+    public User getUserByEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElse(null);
+    }
+
+
     public UserDto signUp(SignUpDto signUpDto) {
         Optional<User> user = userRepository.findByEmail(signUpDto.getEmail());
         if(user.isPresent()){
@@ -53,4 +59,7 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public User save(User newUser) {
+        return userRepository.save(newUser);
+    }
 }
