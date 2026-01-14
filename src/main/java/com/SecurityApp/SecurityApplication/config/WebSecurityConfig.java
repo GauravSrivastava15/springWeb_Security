@@ -1,5 +1,6 @@
 package com.SecurityApp.SecurityApplication.config;
 
+import com.SecurityApp.SecurityApplication.entity.enums.Permission;
 import com.SecurityApp.SecurityApplication.entity.enums.Role;
 import com.SecurityApp.SecurityApplication.filters.JwtAuthFilter;
 import com.SecurityApp.SecurityApplication.handlers.OAuth2SuccessHandler;
@@ -33,6 +34,14 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/posts/**")
                                 .hasAnyRole(Role.ADMIN.name(), Role.CREATOR.name())
+                        .requestMatchers(HttpMethod.POST, "/posts/**")
+                            .hasAnyAuthority(Permission.POST_CREATE.name())
+                        .requestMatchers(HttpMethod.GET, "/posts/**")
+                            .hasAuthority(Permission.POST_VIEW.name())
+                        .requestMatchers(HttpMethod.PUT, "/posts/**")
+                            .hasAuthority(Permission.POST_UPDATE.name())
+                        .requestMatchers(HttpMethod.DELETE, "/posts/**")
+                            .hasAuthority(Permission.POST_DELETE.name())
                         .anyRequest().authenticated())
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
