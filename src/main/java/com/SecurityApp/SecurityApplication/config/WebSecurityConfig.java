@@ -1,21 +1,16 @@
 package com.SecurityApp.SecurityApplication.config;
 
+import com.SecurityApp.SecurityApplication.entity.enums.Role;
 import com.SecurityApp.SecurityApplication.filters.JwtAuthFilter;
 import com.SecurityApp.SecurityApplication.handlers.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -26,13 +21,18 @@ public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private static final String[] publicRoutes = {
+            "/error", "/auth/**", "/home.html"
+    };
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/posts", "/error", "/auth/**", "/home.html").permitAll()
-//                        .requestMatchers("/posts/**").hasAnyRole("ADMIN")
+                        .requestMatchers(publicRoutes).permitAll()
+                        .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/posts/**")
+                                .hasAnyRole(Role.ADMIN.name(), Role.CREATOR.name())
                         .anyRequest().authenticated())
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
