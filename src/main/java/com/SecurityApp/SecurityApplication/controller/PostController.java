@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +20,13 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<PostDTO>> getAllPosts(){
         return ResponseEntity.ok(postService.getAllPosts());
     }
 
     @GetMapping("/{postId}")
+    @PreAuthorize("@postSecurityService.isOwnerOfPost(#postId)")
     public PostDTO getPostById(@PathVariable Long postId){
         return postService.getPostById(postId);
     }
